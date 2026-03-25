@@ -1,0 +1,26 @@
+{
+  "name": "studix",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/ADRIELY2025/studix#readme",
+  "bugs": {
+    "url": "https://github.com/ADRIELY2025/studix/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ADRIELY2025/studix.git"
+  },
+  "license": "MIT",
+  "author": "ADRIELY THAWANY PEREIRA DE OLIVEIRA",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron.",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "knex": "^3.2.5",
+    "pg": "^8.20.0"
+  }
+}
