@@ -1,25 +1,33 @@
-export function up(knex) {
+exports.up = function (knex) {
     return knex.schema.createTable('city', (table) => {
+        table.comment('Tabela de cidades disponíveis no sistema');
+        // Chave primária auto-incremental (equivalente ao biginteger com identity)
         table.bigIncrements('id').primary();
-        table.text('nome').notNullable();
-
-        table.bigInteger('federative_unit_id').unsigned().notNullable()
-            .references('id').inTable('federative_unit');
-
-        table.boolean('ativo').defaultTo(true);
-        table.boolean('excluido').defaultTo(false);
-        
-         table.timestamp('criado_em', { useTZ: false })
+        //Código do estado
+        table.bigInteger('id_uf');
+        // Código do cidade
+        table.text('codigo').nullable();
+        // Nome da cidade
+        table.text('nome').nullable();
+        // Data e hora de criação do registro — preenchida automaticamente
+        table.timestamp('criado_em', { useTz: false })
+            .notNullable()
             .defaultTo(knex.fn.now())
             .comment('Data e hora de criação do registro');
-
-        table.timestamp('atualizado_em' , { useTZ: false})
+        // Data e hora da última atualização — atualizada automaticamente via trigger
+        table.timestamp('atualizado_em', { useTz: false })
+            .nullable()
             .defaultTo(knex.fn.now())
             .comment('Data e hora da última atualização do registro');
-   
+        table
+            .foreign('id_uf')             // coluna local
+            .references('id')             // coluna referenciada
+            .inTable('federative_unit')   // tabela referenciada
+            .onDelete('CASCADE')          // ao deletar o pai, deleta os filhos
+            .onUpdate('NO ACTION');       // ao atualizar o pai, não faz nada
     });
-}
+};
 
-export function down(knex) {
+exports.down = function (knex) {
     return knex.schema.dropTable('city');
-}
+};
