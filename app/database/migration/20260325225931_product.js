@@ -1,27 +1,26 @@
-export function up(knex) {
+exports.up = function (knex) {
     return knex.schema.createTable('product', (table) => {
+        table.comment('Armazena os dados cadastrais dos produtos.');
         table.bigIncrements('id').primary();
         table.text('nome').notNullable();
+        table.text('codigo_barra');
+        table.text('unidade');
+        table.decimal('preco_compra', 18, 4).defaultTo(0);
+        table.decimal('preco_venda', 18, 4).defaultTo(0);
         table.text('descricao');
-        table.decimal('preco_compra', 10, 2).notNullable();
-        table.decimal('preco_venda').defaultTo(0);
-        table.text('unidade', 10).notNullable();
-        table.text('codigo_barras', 50).unique();
-       
-
         table.boolean('ativo').defaultTo(true);
-        table.boolean('excluido').defaultTo(false);
-        
-         table.timestamp('criado_em', { useTZ: false })
+        table.boolean('excluido').defaultTo(false)
+        // Data e hora de criação do registro — preenchida automaticamente
+        table.timestamp('criado_em', { useTz: false })
             .defaultTo(knex.fn.now())
             .comment('Data e hora de criação do registro');
-
-        table.timestamp('atualizado_em' , { useTZ: false})
+        // Data e hora da última atualização — atualizada automaticamente via trigger
+        table.timestamp('atualizado_em', { useTz: false })
             .defaultTo(knex.fn.now())
             .comment('Data e hora da última atualização do registro');
     });
-}
+};
 
-export function down(knex) {
+exports.down = function (knex) {
     return knex.schema.dropTable('product');
-}
+};
