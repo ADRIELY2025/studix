@@ -5,7 +5,7 @@ exports.seed = async function (knex) {
 
     const batchSize = 1000;
 
-    const total = 1000000;
+    const total = 10000;
 
     const unidades = ['UN', 'KG', 'G', 'LT', 'ML', 'CX', 'PC', 'FD'];
     for (let i = 0; i < total; i += batchSize) {
@@ -16,7 +16,7 @@ exports.seed = async function (knex) {
             preco_compra: faker.commerce.price({ min: 20, max: 150 }),
             preco_venda: faker.commerce.price({ min: 155, max: 400 }),
             descricao: faker.commerce.productDescription(),
-            ativo: faker.datatype.boolean(),
+            ativo: faker.datatype.boolean()
         }));
         await knex('product').insert(batch);
     }

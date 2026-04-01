@@ -1,0 +1,92 @@
+{% extends "layouts/main.html" %}
+
+{% block title %}Nova Empresa{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <!-- Título -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <h4 class="fw-bold">Cadastro de Empresa</h4>
+        </div>
+    </div>
+
+    <form id="form">
+        <input type="hidden" id="id" name="id">
+        <input type="hidden" id="action" name="action">
+
+        <div class="row">
+
+            <!-- Razão Social -->
+            <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" name="razao_social" id="razao_social" placeholder="Razão Social" required>
+                    <label for="razao_social">Razão Social</label>
+                </div>
+            </div>
+
+            <!-- Nome Fantasia -->
+            <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" name="nome_fantasia" id="nome_fantasia" placeholder="Nome Fantasia">
+                    <label for="nome_fantasia">Nome Fantasia</label>
+                </div>
+            </div>
+
+            <!-- CNPJ -->
+            <div class="col-md-4 mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" name="cnpj" id="cnpj" placeholder="CNPJ" required>
+                    <label for="cnpj">CNPJ</label>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-4 mb-3">
+                <div class="form-floating">
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Email">
+                    <label for="email">Email</label>
+                </div>
+            </div>
+
+            <!-- Telefone -->
+            <div class="col-md-4 mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone">
+                    <label for="telefone">Telefone</label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Ativo -->
+        <div class="row">
+            <div class="col-12">
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" name="ativo" id="ativo" value="true">
+                    <label class="form-check-label" for="ativo">
+                        Empresa ativa
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão -->
+        <div class="row">
+            <div class="col-12">
+                <button type="button" class="btn btn-success" id="insert">
+                    <i class="fa-solid fa-floppy-disk me-1"></i>
+                    Salvar
+                </button>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="file:///{{ assets }}/js/enterprise.js"></script>
+{% endblock %}

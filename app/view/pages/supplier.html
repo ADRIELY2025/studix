@@ -1,0 +1,75 @@
+{% extends "layouts/main.html" %}
+
+{% block title %}Novo Fornecedor{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <h4 class="fw-bold">Cadastro de Fornecedor</h4>
+        </div>
+    </div>
+
+    <form id="form">
+        <input type="hidden" id="id" name="id">
+        <input type="hidden" id="action" name="action">
+
+        <div class="row">
+
+            <!-- Nome Fantasia -->
+            <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" name="nome_fantasia" placeholder="Nome fantasia" required>
+                    <label>Nome Fantasia</label>
+                </div>
+            </div>
+
+            <!-- Razão Social / Sobrenome -->
+            <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" name="sobrenome_razao" placeholder="Razão social">
+                    <label>Razão Social / Sobrenome</label>
+                </div>
+            </div>
+
+            <!-- CPF / CNPJ -->
+            <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" name="cpf_cnpj" placeholder="CPF ou CNPJ">
+                    <label>CPF / CNPJ</label>
+                </div>
+            </div>
+
+            <!-- RG / IE -->
+            <div class="col-md-6 mb-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control" name="rg_ie" placeholder="RG ou Inscrição Estadual">
+                    <label>RG / Inscrição Estadual</label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Ativo -->
+        <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" name="ativo" id="ativo" value="true" checked>
+            <label class="form-check-label" for="ativo">Fornecedor ativo</label>
+        </div>
+
+        <!-- Botão -->
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-success px-4" id="insert">
+                <i class="fa-solid fa-floppy-disk me-1"></i>
+                Salvar
+            </button>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="file:///{{ assets }}/js/supplier.js"></script>
+{% endblock %}

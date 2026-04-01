@@ -3,9 +3,9 @@ export default class Product {
     // Tabela no banco
     static table = 'product';
     // Mapeamento: índice da coluna no DataTable → nome no banco
-    static #columns = ['id', 'nome', 'codigo_barra', 'unidade', 'preco_compra', 'preco_venda', 'ativo', 'criado_em', 'atualizado_em', null];
+    static #columns = ['id', 'nome', 'codigo_barra', 'unidade', 'descricao', 'preco_compra', 'preco_venda', 'ativo', 'criado_em', 'atualizado_em', null];
     // Colunas pesquisáveis pelo termo de busca
-    static #searchable = ['nome', 'codigo_barra', 'unidade', 'preco_compra', 'preco_venda'];
+    static #searchable = ['nome', 'codigo_barra', 'unidade', 'descricao', 'preco_compra', 'preco_venda'];
     //Implementamos a pesquisa completa para o produto
     static async find(data = {}) {
         const { term = '', limit = 10, offset = 0, orderType = 'asc', column = 0, draw = 1 } = data;

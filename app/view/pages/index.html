@@ -7,17 +7,138 @@
 {% endblock %}
 
 {% block content %}
-<h1>Painel Principal</h1>
+<div class="container">
 
-<!--<button onclick="api.window.open('pages/list-customer', { title: 'Clientes' })">
-    Clientes
-</button>
+    <!-- Título -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="fw-bold text-dark">
+                <i class="fa-solid fa-chart-line me-2"></i>
+                Painel Principal
+            </h3>
+            <hr>
+        </div>
+    </div>
 
-<button onclick="api.window.openModal('pages/customer', { width: 900, height: 600, title: 'Cadastro' })">
-    Cadastro
-</button>
+    <!-- Cards -->
+    <div class="row g-4">
 
-<button onclick="api.window.openModal('pages/list-customer', { width: 900, height: 600, title: 'Clientes' })">
-    Clientes (Modal)
-</button>-->
+        <!-- EMPRESA -->
+        <div class="col-md-3">
+            <div class="card dashboard-card card-empresa"
+                onclick="api.window.open('pages/list-enterprise', { title: 'Empresas' })">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-building fa-2x mb-3"></i>
+                    <h5>Empresas</h5>
+                    <p>Gerenciar empresas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORNECEDOR -->
+        <div class="col-md-3">
+            <div class="card dashboard-card card-fornecedor"
+                onclick="api.window.open('pages/list-supplier', { title: 'Fornecedores' })">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-truck fa-2x mb-3"></i>
+                    <h5>Fornecedores</h5>
+                    <p>Gerenciar fornecedores</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- USUÁRIOS -->
+        <div class="col-md-3">
+            <div class="card dashboard-card card-usuario"
+                onclick="api.window.open('pages/list-users', { title: 'Usuários' })">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-circle-user fa-2x mb-3"></i>
+                    <h5>Usuários</h5>
+                    <p>Gerenciar usuários</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CLIENTES -->
+        <div class="col-md-3">
+            <div class="card dashboard-card card-cliente"
+                onclick="api.window.open('pages/list-customer', { title: 'Clientes' })">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-user-group"></i>
+                    <h5>Clientes</h5>
+                    <p>Gerenciar clientes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRODUTOS -->
+        <div class="col-md-3">
+            <div class="card dashboard-card card-produto"
+                onclick="api.window.open('pages/list-product', { title: 'Produtos' })">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-box fa-2x mb-3"></i>
+                    <h5>Produtos</h5>
+                    <p>Gerenciar produtos</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+
+/* Card base */
+.dashboard-card {
+    cursor: pointer;
+    border: none;
+    border-radius: 14px;
+    color: white;
+    transition: all 0.3s ease;
+    height: 100%;
+    padding: 10px;
+}
+
+/* Hover */
+.dashboard-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+}
+
+/* 🎨 CORES POR MÓDULO */
+
+.card-empresa {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+}
+
+.card-fornecedor {
+    background: linear-gradient(135deg, #198754, #146c43);
+}
+
+.card-usuario {
+    background: linear-gradient(135deg, #6f42c1, #59359c);
+}
+
+.card-cliente {
+    background: linear-gradient(135deg, #fd7e14, #ca6510);
+}
+
+.card-produto {
+    background: linear-gradient(135deg, #dc3545, #b02a37);
+}
+
+/* Texto */
+.dashboard-card h5 {
+    font-weight: 600;
+}
+
+.dashboard-card p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+</style>
 {% endblock %}

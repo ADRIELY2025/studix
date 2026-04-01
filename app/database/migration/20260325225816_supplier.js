@@ -1,9 +1,10 @@
 export function up(knex) {
     return knex.schema.createTable('supplier', (table) => {
         table.bigIncrements('id').primary();
-        table.text('nome').notNullable();
-        table.text('cpf');
-        table.text('rg');
+        table.text('nome_fantasia').notNullable();
+        table.text('sobrenome_razao');
+        table.text('cpf_cnpj');
+        table.text('rg_ie');
         table.boolean('ativo').defaultTo(true);
         table.boolean('excluido').defaultTo(false);
         
@@ -21,3 +22,5 @@ export function up(knex) {
 export function down(knex) {
     return knex.schema.dropTable('supplier');
 }
+
+       

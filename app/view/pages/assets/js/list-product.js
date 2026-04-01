@@ -8,6 +8,7 @@ Datatables.SetTable('#table-products', [
     { data: 'nome' },
     { data: 'codigo_barra' },
     { data: 'unidade' },
+    { data: 'descricao' },
     {
         data: 'preco_compra',
         render: function (data) {
