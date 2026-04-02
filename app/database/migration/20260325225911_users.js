@@ -2,8 +2,10 @@ export function up(knex) {
     return knex.schema.createTable('users', (table) => {
         table.bigIncrements('id').primary();
         table.text('nome').notNullable();
+        table.text('sobrenome');
+        table.text('cpf_rg');
         table.text('email').notNullable().unique();
-        table.text('senha').notNullable();
+        table.text('senha');
         table.boolean('ativo').defaultTo(true);
         table.boolean('excluido').defaultTo(false);
         

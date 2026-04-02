@@ -5,8 +5,7 @@ const form = document.getElementById('form');
 
 //  Máscara CPF/CNPJ (simples)
 Inputmask({
-    mask: ['999.999.999-99', '99.999.999/9999-99'],
-    keepStatic: true
+mask: ['999.999.999-99', '99.999.999/9999-99'],
 }).mask('[name="cpf_cnpj"]');
 
 

@@ -82,6 +82,31 @@ ipcMain.handle('customer:delete', async (_e, id) => {
     if (result.status) broadcastReload('customer:reload');
     return result;
 });
+//  ENTERPRISE
+ipcMain.handle('enterprise:insert', async (_e, data) => {
+    const result = await Enterprise.insert(data);
+    if (result.status) broadcastReload('enterprise:reload');
+    return result;
+});
+
+ipcMain.handle('enterprise:find', async (_e, where = {}) => {
+    return await Enterprise.find(where);
+});
+
+ipcMain.handle('enterprise:findById', async (_e, id) => {
+    return await Enterprise.findById(id);
+});
+
+ipcMain.handle('enterprise:update', async (_e, id, data) => {
+    const result = await Enterprise.update(id, data);
+    if (result.status) broadcastReload('enterprise:reload');
+    return result;
+});
+ipcMain.handle('enterprise:delete', async (_e, id) => {
+    const result = await Enterprise.delete(id);
+    if (result.status) broadcastReload('enterprise:reload');
+    return result;
+});
 //  PRODUCT
 ipcMain.handle('product:insert', async (_e, data) => {
     const result = await Product.insert(data);
@@ -134,7 +159,7 @@ ipcMain.handle('users:delete', async (_e, id) => {
     if (result.status) broadcastReload('users:reload');
     return result;
 });
-ipcMain.handle('users:findByEmail', async (event, email) => {
+ipcMain.handle('users:findByEmail', async (_e, email) => {
     try {
         const user = await Users.findByEmail(email);
         return { status: true, data: user };

@@ -4,10 +4,10 @@ export default class Users {
     static table = 'users';
 
     // Mapeamento: índice da coluna no DataTable → nome no banco
-    static #columns = ['id', 'nome', 'email','senha'];
+    static #columns = ['id', 'nome','sobrenome','cpf_rg', 'email','senha'];
 
     // Colunas pesquisáveis pelo termo de busca
-    static #searchable = ['nome', 'email'];
+    static #searchable = ['nome', 'sobrenome', 'email'];
     //Insere um novo usuario.
     static async insert(data) {
 

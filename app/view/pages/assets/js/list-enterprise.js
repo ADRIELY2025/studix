@@ -1,6 +1,6 @@
 import { Datatables } from "../components/Datatables.js";
 
-// 🔄 Reload da tabela
+// Reload da tabela
 api.enterprise.onReload(() => {
     $('#table-enterprises').DataTable().ajax.reload(null, false);
 });
@@ -11,6 +11,7 @@ Datatables.SetTable('#table-enterprises', [
     { data: 'razao_social' },
     { data: 'nome_fantasia' },
     { data: 'cnpj' },
+    { data: 'telefone' },
     { data: 'email' },
     {
         data: 'ativo',
@@ -38,7 +39,7 @@ Datatables.SetTable('#table-enterprises', [
 ]).getData(filter => api.enterprise.find(filter));
 
 
-// 🗑️ DELETE
+//  DELETE
 async function deleteEnterprise(id) {
 
     const result = await Swal.fire({
@@ -64,7 +65,7 @@ async function deleteEnterprise(id) {
 }
 
 
-// ✏️ EDIT
+// EDIT
 async function editEnterprise(id) {
     try {
 
@@ -92,6 +93,6 @@ async function editEnterprise(id) {
 }
 
 
-// 🌐 Disponível no HTML
+// Disponível no HTML
 window.deleteEnterprise = deleteEnterprise;
 window.editEnterprise = editEnterprise;

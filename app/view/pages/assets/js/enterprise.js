@@ -5,8 +5,9 @@ const form = document.getElementById('form');
 
 // 📌 Máscara CNPJ
 Inputmask('99.999.999/9999-99').mask('#cnpj');
+Inputmask('(99) 99999-9999').mask('#telefone');
 
-// 🔄 CARREGA DADOS DE EDIÇÃO
+//  CARREGA DADOS DE EDIÇÃO
 (async () => {
     const editData = await api.temp.get('enterprise:edit');
 
@@ -32,7 +33,7 @@ Inputmask('99.999.999/9999-99').mask('#cnpj');
     }
 })();
 
-// 💾 SALVAR
+// SALVAR
 InsertButton.addEventListener('click', async () => {
 
     let timer = 3000;
@@ -43,7 +44,7 @@ InsertButton.addEventListener('click', async () => {
 
     try {
 
-        // ✅ validações
+        // validações
         if (!data.razao_social) {
             toast('error', 'Erro', 'Razão social é obrigatória', timer);
             return;

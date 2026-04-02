@@ -34,15 +34,15 @@ contextBridge.exposeInMainWorld('api', {
         },
     },
     users: {
-    insert(data) { return ipcRenderer.invoke('users:insert', data); },
-    find(where) { return ipcRenderer.invoke('users:find', where); },
-    findById(id) { return ipcRenderer.invoke('users:findById', id); },
-    findByEmail(email) { return ipcRenderer.invoke('users:findByEmail', email);}, 
-    update(id, data) { return ipcRenderer.invoke('users:update', id, data); },
-    delete(id) { return ipcRenderer.invoke('users:delete', id); },
-    onReload(callback) {     
-         ipcRenderer.on('users:reload', () => callback());
-          },
+        insert(data) { return ipcRenderer.invoke('users:insert', data); },
+        find(where) { return ipcRenderer.invoke('users:find', where); },
+        findById(id) { return ipcRenderer.invoke('users:findById', id); },
+        findByEmail(email) { return ipcRenderer.invoke('users:findByEmail', email);}, 
+        update(id, data) { return ipcRenderer.invoke('users:update', id, data); },
+        delete(id) { return ipcRenderer.invoke('users:delete', id); },
+        onReload(callback) {     
+            ipcRenderer.on('users:reload', () => callback());
+            },
     },
     enterprise: {
         insert(data) { return ipcRenderer.invoke('enterprise:insert', data); },
