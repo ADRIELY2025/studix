@@ -25,6 +25,9 @@ Datatables.SetTable('#table-users', [
                 <button onclick="deleteUser(${row.id})" class="btn btn-danger btn-sm">
                     <i class="fa-solid fa-trash"></i>
                 </button>
+                <button onclick="printUser(${row.id})" class="btn btn-xs btn-warning btn-sm">
+                    <i class="fa-solid fa-pen-to-square"></i> Imprimir
+                </button>
             </div>
         `
     }
@@ -58,7 +61,26 @@ async function deleteUser(id) {
         toast('error', 'Falha', err.message);
     }
 }
+async function printUser(id) {
+    try {
+        // 1. Busca os dados completos do cliente
+        const users = await api.users.findById(id);
 
+        if (!users) {
+            toast('error', 'Erro', 'Cliente não encontrado.');
+            return;
+        }
+        const html = `
+        <h1>Ficha do Cliente</h1>
+        <p><strong>ID:</strong> ${users.id}</p>
+        <p><strong>Nome:</strong> ${users.nome}</p>
+        <p><strong>CPF:</strong> ${users.cpf_rg}</p>
+        `;
+        api.report.print(html, { landscape: false });
+    } catch (err) {
+        toast('error', 'Falha', 'Erro: ' + err.message);
+    }
+}
 // EDIT de usuário
 async function editUser(id) {
     try {
@@ -90,3 +112,4 @@ async function editUser(id) {
 //  Disponível globalmente para os botões da tabela
 window.deleteUser = deleteUser;
 window.editUser = editUser;
+window.printUser = printUser;

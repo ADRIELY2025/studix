@@ -7,21 +7,23 @@ import Enterprise from '../controller/Enterprise.js';
 import Supplier from '../controller/Supplier.js';
 import { Print } from '../mixin/Print.js';
 
-ipcMain.handle('print', (_e, stringHtml, args = {}) => {
-    await Print.create().stringHTML(stringHtml).print();
-});
-
-
 function getWin(event) {
     return BrowserWindow.fromWebContents(event.sender);
 }
-
 // Avisa todas as janelas para recarregar
 function broadcastReload(channel) {
     for (const win of BrowserWindow.getAllWindows()) {
         win.webContents.send(channel);
     }
 }
+//Imprimir PDF
+ipcMain.handle('print', async (_e, stringHtml, args = {}) => {
+    await Print.create()
+        .stringCss(`<style>body { font-family: Arial; } h1 { color: #1a1a2e; }</style>`)
+        .stringHTML(stringHtml)
+        .setOptions(args)
+        .print();
+});
 
 //  WINDOW
 ipcMain.handle('window:open', (_e, name, opts = {}) => {

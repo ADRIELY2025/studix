@@ -24,6 +24,9 @@ Datatables.SetTable('#table-suppliers', [
                 <button onclick="deleteSupplier(${row.id})" class="btn btn-danger btn-sm">
                     <i class="fa-solid fa-trash"></i>
                 </button>
+                <button onclick="printSupplier(${row.id})" class="btn btn-xs btn-warning btn-sm">
+                    <i class="fa-solid fa-pen-to-square"></i> Imprimir
+                </button>
             </div>
         `
     }
@@ -59,7 +62,26 @@ async function deleteSupplier(id) {
     }
 }
 
+async function printSupplier(id) {
+    try {
+        // 1. Busca os dados completos do cliente
+        const supplier = await api.supplier.findById(id);
 
+        if (!supplier) {
+            toast('error', 'Erro', 'Cliente não encontrado.');
+            return;
+        }
+        const html = `
+        <h1>Ficha do Cliente</h1>
+        <p><strong>ID:</strong> ${supplier.id}</p>
+        <p><strong>Nome:</strong> ${supplier.nome_fantasia}</p>
+        <p><strong>CPF:</strong> ${supplier.cpf_cnpj}</p>
+        `;
+        api.report.print(html, { landscape: false });
+    } catch (err) {
+        toast('error', 'Falha', 'Erro: ' + err.message);
+    }
+}
 //  EDIT
 async function editSupplier(id) {
     try {
@@ -90,3 +112,4 @@ async function editSupplier(id) {
 //  Disponível global
 window.deleteSupplier = deleteSupplier;
 window.editSupplier = editSupplier;
+window.printSupplier = printSupplier;

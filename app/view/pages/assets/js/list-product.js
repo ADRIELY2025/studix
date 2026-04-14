@@ -47,6 +47,9 @@ Datatables.SetTable('#table-products', [
         searchable: false,
         render: function (row) {
             return `
+            <button onclick="printProduct(${row.id})" class="btn btn-xs btn-warning btn-sm">
+                    <i class="fa-solid fa-pen-to-square"></i> Imprimir
+                </button>
                 <button onclick="editProduct(${row.id})" class="btn btn-xs btn-warning btn-sm">
                     <i class="fa-solid fa-pen-to-square"></i> Editar
                 </button>
@@ -78,6 +81,26 @@ async function deleteProduct(id) {
         }
     }
 }
+async function printProduct(id) {
+    try {
+        // 1. Busca os dados completos do cliente
+        const product = await api.product.findById(id);
+
+        if (!product) {
+            toast('error', 'Erro', 'Empresa não encontrado.');
+            return;
+        }
+        const html = `
+        <h1>Ficha da Empresa</h1>
+        <p><strong>ID:</strong> ${enterprise.id}</p>
+        <p><strong>Nome:</strong> ${enterprise.nome}</p>
+        <p><strong>CPF:</strong> ${enterprise.codigo_barra}</p>
+        `;
+        api.report.print(html, { landscape: false });
+    } catch (err) {
+        toast('error', 'Falha', 'Erro: ' + err.message);
+    }
+}
 async function editProduct(id) {
     try {
         // 1. Busca os dados completos do cliente
@@ -103,3 +126,4 @@ async function editProduct(id) {
 }
 window.deleteProduct = deleteProduct;
 window.editProduct = editProduct;
+window.printProduct = printProduct;

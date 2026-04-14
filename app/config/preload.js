@@ -2,7 +2,6 @@
 
 const { contextBridge, ipcRenderer } = require('electron');
 
-
 contextBridge.exposeInMainWorld('api', {
     report: {
         print(stringHtml, args = {}) { return ipcRenderer.invoke('print', stringHtml, args = {}); }
@@ -27,16 +26,14 @@ contextBridge.exposeInMainWorld('api', {
             ipcRenderer.on('customer:reload', () => callback());
         },
     },
-     product: {
-        insert(data) { return ipcRenderer.invoke('product:insert', data); },
+    product: {
         find(where) { return ipcRenderer.invoke('product:find', where); },
         findById(id) { return ipcRenderer.invoke('product:findById', id); },
-        update(id, data) { return ipcRenderer.invoke('product:update', id, data); },
-        delete(id) { return ipcRenderer.invoke('product:delete', id); },
         onReload(callback) {
             ipcRenderer.on('product:reload', () => callback());
-        },
     },
+},
+
     users: {
         insert(data) { return ipcRenderer.invoke('users:insert', data); },
         find(where) { return ipcRenderer.invoke('users:find', where); },

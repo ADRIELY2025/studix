@@ -33,6 +33,9 @@ Datatables.SetTable('#table-enterprises', [
                 <button onclick="deleteEnterprise(${row.id})" class="btn btn-danger btn-sm">
                     <i class="fa-solid fa-trash"></i> Excluir
                 </button>
+                <button onclick="printEnterprise(${row.id})" class="btn btn-xs btn-warning btn-sm">
+                    <i class="fa-solid fa-pen-to-square"></i> Imprimir
+                </button>
             `;
         }
     }
@@ -64,6 +67,26 @@ async function deleteEnterprise(id) {
     }
 }
 
+ async function printEnterprise(id) {
+    try {
+        // 1. Busca os dados completos do cliente
+        const enterprise = await api.enterprise.findById(id);
+
+        if (!enterprise) {
+            toast('error', 'Erro', 'Empresa não encontrado.');
+            return;
+        }
+        const html = `
+        <h1>Ficha da Empresa</h1>
+        <p><strong>ID:</strong> ${enterprise.id}</p>
+        <p><strong>Nome:</strong> ${enterprise.razao_social}</p>
+        <p><strong>CPF:</strong> ${enterprise.cnpj}</p>
+        `;
+        api.report.print(html, { landscape: false });
+    } catch (err) {
+        toast('error', 'Falha', 'Erro: ' + err.message);
+    }
+}
 
 // EDIT
 async function editEnterprise(id) {
@@ -96,3 +119,4 @@ async function editEnterprise(id) {
 // Disponível no HTML
 window.deleteEnterprise = deleteEnterprise;
 window.editEnterprise = editEnterprise;
+window.printEnterprise = printEnterprise;

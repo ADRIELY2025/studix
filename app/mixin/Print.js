@@ -1,71 +1,167 @@
-import { BrowserWindow } from 'electron'
+// ES Module — require() não existe aqui; todos os módulos importados no topo
+import { BrowserWindow, ipcMain, dialog } from 'electron'
+import { fileURLToPath } from 'url'
 import path from 'path'
 import fs from 'fs'
 import os from 'os'
+import puppeteer from 'puppeteer'
+
+// Resolve __dirname compatível com ES Module para localizar pdf-preload.js
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export class Print {
-    #html = null
-    #opcoes = {
-        marginsType: 0,
-        pageSize: 'A4',
-        printBackground: true,
-        landscape: false
+
+  // Armazena o HTML do relatório recebido via stringHTML()
+  #html = null
+
+  // Armazena o CSS personalizado recebido via stringCss()
+  #css = null
+
+  // Configurações padrão de impressão — sobrescritas parcialmente via setOptions()
+  #opcoes = { marginsType: 0, pageSize: 'A4', printBackground: true, landscape: false }
+
+  // Factory — ponto de entrada da interface fluente
+  static create() { return new Print(); }
+
+  // Recebe o HTML do relatório e retorna this para encadeamento fluente
+  stringHTML(html) { this.#html = html; return this; }
+
+  // Recebe o CSS personalizado das páginas do relatório e retorna this para encadeamento fluente
+  stringCss(css = '') { this.#css = css; return this; }
+
+  // Mescla as opções recebidas com os padrões de #opcoes e retorna this para encadeamento fluente
+  setOptions(opt = {}) { this.#opcoes = { ...this.#opcoes, ...opt }; return this; }
+
+  // Monta o HTML completo do viewer recebendo a URL do PDF e o nome do arquivo já gerado
+  assembleHTMLString(pdfUrl = '', pdfFileName = '') {
+    return `
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+
+      <head>
+        <meta charset="UTF-8">
+        <title>Visualizar PDF</title>
+        <style>
+          *,
+          *::before,
+          *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+
+          body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          }
+          #pdf-viewer {
+            flex: 1;
+            width: 100%;
+            display: block;
+            border: none;
+          }
+        </style>
+      </head>
+      <body>
+        <embed id="pdf-viewer" src="${pdfUrl}#zoom=100&pagemode=none" type="application/pdf">
+        <script>
+          async function salvarPdf() {
+            const btn = document.getElementById('btn-save');
+            btn.disabled = true; btn.textContent = '⏳ Aguarde...';
+            try {
+              const result = await window.printApi.salvar();
+              if (result?.status) {
+                btn.style.background = '#0369a1'; btn.textContent = '✔ PDF Salvo!';
+                setTimeout(() => { btn.removeAttribute('style'); btn.textContent = '⬇ Salvar PDF'; btn.disabled = false; }, 2000);
+              } else { btn.disabled = false; btn.textContent = '⬇ Salvar PDF'; }
+            } catch { btn.disabled = false; btn.textContent = '⬇ Salvar PDF'; }
+          }
+        </script>
+      </body>
+      </html>
+    `;
+  }
+
+  // Gera o PDF via Puppeteer unindo #css e #html em um template dedicado ao Puppeteer
+  async #gerarPdf(pdfPath) {
+    let browser = null;
+    try {
+      browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-extensions', '--disable-dev-shm-usage'],
+      });
+      const page = await browser.newPage();
+      // Template dedicado ao Puppeteer — une #css e #html sem estrutura do viewer
+      await page.setContent(
+        `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+                <style>${this.#css ?? ''}</style></head><body>${this.#html ?? ''}</body></html>`,
+        { waitUntil: 'networkidle0' }
+      );
+      await page.pdf({
+        path: pdfPath,
+        format: this.#opcoes.pageSize,
+        printBackground: this.#opcoes.printBackground,
+        landscape: this.#opcoes.landscape,
+        margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' },
+      });
+    } finally {
+      // Encerra o Chromium e libera memória — executado mesmo em caso de exceção
+      if (browser) await browser.close();
     }
-    //  Factory — ponto de entrada da interface fluente
-    static create() {
-        return new Print();
-    }
-    //  Define o conteúdo HTML a ser impresso
-    stringHTML(html) {
-        this.#html = html;
-        return this;
-    }
-    //Abre o PDF para exibição ou impressão
-    async print() {
-        if (!this.#html) {
-            throw new Error('HTML não definido.');
-        }
+  }
 
-        // 🪟 2. Cria uma janela invisível do Electron
-        // Essa janela é necessária porque o Electron só consegue gerar PDF a partir de uma página renderizada
-        const win = new BrowserWindow({
-            show: false, // não mostra na tela
-            webPreferences: {
-                sandbox: false // evita restrições que podem quebrar o carregamento
-            }
-        });
+  // Orquestra geração do PDF, abertura do modal e ciclo de vida dos arquivos temporários
+  async print() {
+    const sessionId = Date.now();
+    const pdfFileName = `relatorio_${sessionId}.pdf`;
+    const pdfPath = path.join(os.tmpdir(), pdfFileName);
+    const viewerPath = path.join(os.tmpdir(), `print_viewer_${sessionId}.html`);
+    const saveChannel = `print:save:${sessionId}`;
 
-        // 🌐 3. Carrega o HTML na janela
-        // Usa uma URL especial "data:" para injetar HTML direto (sem arquivo físico)
-        await win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(this.#html)}`);
+    await this.#gerarPdf(pdfPath);
 
-        // ⏳ 4. Espera o HTML terminar de carregar
-        // Sem isso, o PDF pode sair em branco ou incompleto
-        await new Promise(resolve => {
-            win.webContents.on('did-finish-load', resolve);
-        });
+    // Converte backslashes do Windows para forward slashes exigidos pelo protocolo file://
+    const pdfUrl = 'file:///' + pdfPath.replace(/\\/g, '/');
 
-        // 📄 5. Gera o PDF
-        // Aqui o Electron "tira uma foto" da página e transforma em PDF
-        const pdfBuffer = await win.webContents.printToPDF(this.#opcoes);
+    // Grava o viewer montado por assembleHTMLString() com a URL do PDF embutida no src
+    fs.writeFileSync(viewerPath, this.assembleHTMLString(pdfUrl, pdfFileName), 'utf-8');
 
-        // 📁 6. Define onde salvar o arquivo
-        const filePath = this.#filePath ||
-            path.join(os.tmpdir(), `print-${Date.now()}.pdf`);
+    const parentWin = BrowserWindow.getFocusedWindow();
+    const viewerWin = new BrowserWindow({
+      width: 920, height: 720, minWidth: 640, minHeight: 480,
+      title: 'Visualizar PDF', show: false, autoHideMenuBar: true,
+      parent: parentWin || undefined, modal: !!parentWin,
+      webPreferences: {
+        // Preload estático — canal IPC da sessão injetado via additionalArguments
+        preload: path.join(__dirname, 'pdf-preload.js'),
+        additionalArguments: [`--save-channel=${saveChannel}`],
+        contextIsolation: true,
+        nodeIntegration: false,
+      },
+    });
 
-        // 💾 7. Salva o PDF no disco
-        fs.writeFileSync(filePath, pdfBuffer);
+    // handleOnce auto-remove o listener após o primeiro uso — sem vazamento de handlers
+    ipcMain.handleOnce(saveChannel, async () => {
+      const result = await dialog.showSaveDialog(viewerWin, {
+        title: 'Salvar PDF', defaultPath: pdfFileName,
+        filters: [{ name: 'Arquivo PDF', extensions: ['pdf'] }],
+      });
+      if (result.canceled || !result.filePath) return { status: false };
+      // Copia o PDF do temporário para o destino escolhido pelo usuário
+      fs.copyFileSync(pdfPath, result.filePath);
+      return { status: true };
+    });
 
-        // 🚀 8. Abre o PDF no leitor padrão do sistema
-        const { shell } = require('electron');
-        await shell.openPath(filePath);
+    // Ao fechar: remove handler residual e deleta os arquivos temporários da sessão
+    viewerWin.on('closed', () => {
+      try { ipcMain.removeHandler(saveChannel); } catch { }
+      for (const f of [pdfPath, viewerPath]) try { fs.unlinkSync(f); } catch { }
+    });
 
-        // ❌ 9. Fecha a janela invisível (boa prática)
-        win.close();
-
-        // 🔁 10. Retorna o caminho do arquivo gerado
-        return filePath;
-    }
-
+    viewerWin.once('ready-to-show', () => viewerWin.show());
+    viewerWin.loadFile(viewerPath);
+  }
 }
-

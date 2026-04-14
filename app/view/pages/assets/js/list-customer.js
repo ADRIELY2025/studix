@@ -52,22 +52,24 @@ async function deleteCustomer(id) {
     }
 }
 
-    async function printCustomer(id) {
-    //Selecionar os dados do cliente
- try {
-        // 1. Busca os dados do cliente
+   async function printCustomer(id) {
+    try {
+        // 1. Busca os dados completos do cliente
         const customer = await api.customer.findById(id);
 
         if (!customer) {
             toast('error', 'Erro', 'Cliente não encontrado.');
             return;
         }
-
-        // 2. Salva no temp (opcional)
-        await api.temp.set('customer:edit', {
-            action: 'e',
-            ...customer,
-        })
+        const html = `
+        <h1>Ficha do Cliente</h1>
+        <p><strong>ID:</strong> ${customer.id}</p>
+        <p><strong>Nome:</strong> ${customer.nome}</p>
+        <p><strong>CPF:</strong> ${customer.cpf}</p>
+        `;
+        api.report.print(html, { landscape: false });
+    } catch (err) {
+        toast('error', 'Falha', 'Erro: ' + err.message);
     }
 }
 
@@ -97,3 +99,4 @@ async function editCustomer(id) {
 
 window.deleteCustomer = deleteCustomer;
 window.editCustomer = editCustomer;
+window.printCustomer = printCustomer;
