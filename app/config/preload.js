@@ -2,7 +2,11 @@
 
 const { contextBridge, ipcRenderer } = require('electron');
 
+
 contextBridge.exposeInMainWorld('api', {
+    report: {
+        print(stringHtml, args = {}) { return ipcRenderer.invoke('print', stringHtml, args = {}); }
+    },
     window: {
         open(name, opts) { return ipcRenderer.invoke('window:open', name, opts); },
         openModal(name, opts) { return ipcRenderer.invoke('window:openModal', name, opts); },

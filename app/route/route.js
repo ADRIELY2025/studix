@@ -5,6 +5,12 @@ import Product from '../controller/Product.js';
 import Users from '../controller/Users.js';
 import Enterprise from '../controller/Enterprise.js';
 import Supplier from '../controller/Supplier.js';
+import { Print } from '../mixin/Print.js';
+
+ipcMain.handle('print', (_e, stringHtml, args = {}) => {
+    await Print.create().stringHTML(stringHtml).print();
+});
+
 
 function getWin(event) {
     return BrowserWindow.fromWebContents(event.sender);

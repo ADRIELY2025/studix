@@ -16,6 +16,9 @@ Datatables.SetTable('#table-customers', [
         searchable: false,
         render: function (row) {
             return `
+                <button onclick="printCustomer(${row.id})" class="btn btn-xs btn-warning btn-sm">
+                    <i class="fa-solid fa-pen-to-square"></i> Imprimir
+                </button>
                 <button onclick="editCustomer(${row.id})" class="btn btn-xs btn-warning btn-sm">
                     <i class="fa-solid fa-pen-to-square"></i> Editar
                 </button>
@@ -46,6 +49,25 @@ async function deleteCustomer(id) {
         } else {
             toast('error', 'Erro', response.msg);
         }
+    }
+}
+
+    async function printCustomer(id) {
+    //Selecionar os dados do cliente
+ try {
+        // 1. Busca os dados do cliente
+        const customer = await api.customer.findById(id);
+
+        if (!customer) {
+            toast('error', 'Erro', 'Cliente não encontrado.');
+            return;
+        }
+
+        // 2. Salva no temp (opcional)
+        await api.temp.set('customer:edit', {
+            action: 'e',
+            ...customer,
+        })
     }
 }
 
