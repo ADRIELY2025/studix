@@ -72,7 +72,7 @@ async function printSupplier(id) {
             return;
         }
         const html = `
-        <h1>Ficha do Cliente</h1>
+        <h1>Ficha do Fornecedor</h1>
         <p><strong>ID:</strong> ${supplier.id}</p>
         <p><strong>Nome:</strong> ${supplier.nome_fantasia}</p>
         <p><strong>CPF:</strong> ${supplier.cpf_cnpj}</p>

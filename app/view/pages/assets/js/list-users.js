@@ -71,7 +71,7 @@ async function printUser(id) {
             return;
         }
         const html = `
-        <h1>Ficha do Cliente</h1>
+        <h1>Ficha do Usuario</h1>
         <p><strong>ID:</strong> ${users.id}</p>
         <p><strong>Nome:</strong> ${users.nome}</p>
         <p><strong>CPF:</strong> ${users.cpf_rg}</p>
